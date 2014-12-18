@@ -78,7 +78,7 @@ func WrapAll(cmds []cli.Command, wrappers ...CmdWrapper) []cli.Command {
 	return out
 }
 
-func WrapApp(app cli.App, wrappers ...CmdWrapper) cli.App {
+func WrapApp(app *cli.App, wrappers ...CmdWrapper) *cli.App {
 	app.Commands = WrapAll(app.Commands)
 	return app
 }

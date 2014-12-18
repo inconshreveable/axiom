@@ -78,9 +78,8 @@ func WrapAll(cmds []cli.Command, wrappers ...CmdWrapper) []cli.Command {
 	return out
 }
 
-func WrapApp(app *cli.App, wrappers ...CmdWrapper) *cli.App {
-	app.Commands = WrapAll(app.Commands)
-	return app
+func WrapApp(app *cli.App, wrappers ...CmdWrapper) {
+	app.Commands = WrapAll(app.Commands, wrappers...)
 }
 
 type Logged struct {
@@ -167,15 +166,9 @@ func (w *Logged) HandlerFor(target, level, format string) (log.Handler, error) {
 	return log.LvlFilterHandler(lvl, handler), nil
 }
 
-type mtrap struct{}
-
-func NewMousetrap() CmdWrapper {
-	return new(mtrap)
-}
-
-func (w *mtrap) Wrap(cmd cli.Command) cli.Command {
-	oldAction := cmd.Action
-	cmd.Action = func(c *cli.Context) {
+func Mousetrap(app *cli.App) {
+	oldBefore := app.Before
+	app.Before = func(c *cli.Context) error {
 		if mousetrap.StartedByExplorer() {
 			cmd := exec.Command("cmd.exe", append([]string{"/K"}, os.Args...)...)
 			cmd.Env = append(os.Environ(), "MOUSETRAP=1")
@@ -186,9 +179,8 @@ func (w *mtrap) Wrap(cmd cli.Command) cli.Command {
 			}
 			os.Exit(0)
 		}
-		oldAction(c)
+		return oldBefore(c)
 	}
-	return cmd
 }
 
 type YAMLConfigLoader struct {

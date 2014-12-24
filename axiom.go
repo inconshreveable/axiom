@@ -48,6 +48,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"sort"
 
 	"github.com/codegangsta/cli"
 	"github.com/inconshreveable/go-update"
@@ -178,6 +179,9 @@ func Mousetrap(app *cli.App) {
 				os.Exit(1)
 			}
 			os.Exit(0)
+		}
+		if oldBefore == nil {
+			return nil
 		}
 		return oldBefore(c)
 	}
@@ -317,11 +321,12 @@ func (cmd *Updater) Command() cli.Command {
 			cli.StringFlag{"channel", cmd.DefaultChannel, "update to the most recent release on this channel", "CHANNEL"},
 		},
 		Action: func(c *cli.Context) {
-			_, err := cmd.Update(c.String("channel"), c.App.Version)
+			res, err := cmd.Update(c.String("channel"), c.App.Version)
 			if err != nil {
 				fmt.Println("Update command failed:", err)
 				os.Exit(1)
 			}
+			fmt.Printf("Sucessfully updated to version %s\n", res.Version)
 		},
 	}
 }
@@ -342,3 +347,23 @@ func (w *crashHandler) Wrap(cmd cli.Command) cli.Command {
 	}
 	return cmd
 }
+
+func SortCommands(commands []cli.Command) {
+	sort.Sort(sortedCommands(commands))
+}
+
+type sortedCommands []cli.Command
+
+func (a sortedCommands) Len() int           { return len(a) }
+func (a sortedCommands) Less(i, j int) bool { return a[i].Name < a[j].Name }
+func (a sortedCommands) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+func SortFlags(flags []cli.Flag) {
+	sort.Sort(sortedFlags(flags))
+}
+
+type sortedFlags []cli.Flag
+
+func (a sortedFlags) Len() int           { return len(a) }
+func (a sortedFlags) Less(i, j int) bool { return a[i].String() < a[j].String() }
+func (a sortedFlags) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }

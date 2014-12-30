@@ -318,7 +318,7 @@ func (cmd *Updater) Command() cli.Command {
 		Name:  "update",
 		Usage: "update to the latest version",
 		Flags: []cli.Flag{
-			cli.StringFlag{"channel", cmd.DefaultChannel, "update to the most recent release on this channel", "CHANNEL"},
+			cli.StringFlag{"channel", cmd.DefaultChannel, "update to the most recent release on this channel", ""},
 		},
 		Action: func(c *cli.Context) {
 			res, err := cmd.Update(c.String("channel"), c.App.Version)

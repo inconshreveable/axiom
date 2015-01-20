@@ -173,6 +173,9 @@ func Mousetrap(app *cli.App) {
 		if mousetrap.StartedByExplorer() {
 			cmd := exec.Command("cmd.exe", append([]string{"/K"}, os.Args...)...)
 			cmd.Env = append(os.Environ(), "MOUSETRAP=1")
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
 			err := cmd.Run()
 			if err != nil {
 				fmt.Println("Failed to execute sub-process. Error:", err)

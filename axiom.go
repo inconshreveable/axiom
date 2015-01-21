@@ -171,8 +171,14 @@ func Mousetrap(app *cli.App) {
 	oldBefore := app.Before
 	app.Before = func(c *cli.Context) error {
 		if mousetrap.StartedByExplorer() {
-			cmd := exec.Command("cmd.exe", append([]string{"/K"}, os.Args...)...)
+			cmd := exec.Command(os.Args[0], os.Args[1:]...)
 			cmd.Env = append(os.Environ(), "MOUSETRAP=1")
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+			cmd = exec.Command("cmd.exe", "/K")
+			cmd.Env = os.Environ()
 			cmd.Stdin = os.Stdin
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr

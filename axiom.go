@@ -51,10 +51,10 @@ import (
 	"sort"
 
 	"github.com/codegangsta/cli"
-	"github.com/inconshreveable/go-update"
-	"github.com/inconshreveable/go-update/check"
 	"github.com/inconshreveable/mousetrap"
 	"github.com/mattn/go-colorable"
+	"gopkg.in/inconshreveable/go-update.v0"
+	"gopkg.in/inconshreveable/go-update.v0/check"
 	log "gopkg.in/inconshreveable/log15.v2"
 	"gopkg.in/inconshreveable/log15.v2/term"
 	"gopkg.in/yaml.v1"
